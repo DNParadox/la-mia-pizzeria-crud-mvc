@@ -1,0 +1,103 @@
+﻿@{
+    Layout = "_LayoutRazor";
+    ViewData["Title"] = "Razor Snack";
+
+
+    // Var Snack 1
+
+    string nome = "Francesco";
+    string cognome = "Marra";
+
+    // Var Snack 2 
+    int numberS2 = 10;
+
+    // Var Snack 3
+    string text = "nel mezzo del cammin di nostra vita";
+    int iS3 = 0;
+
+    // Area test
+
+    foreach(Char letter in text)
+    {
+        if(letter == 'a')
+        {
+            iS3++;
+        }
+    }
+
+    // Area test fine
+}
+
+<h1> Razor Snacks 1 </h1>
+
+<h2> Ciao @nome @cognome</h2>
+
+<h1> Razor Snacks 2</h1>
+
+<h2>
+    @for (var i = 0; i <= @numberS2; i++)
+    {
+        <span>  - @i  </span>
+    }
+</h2>
+
+<h1>Razor Snacks 3 </h1>
+
+<h2>
+    @text contiene @iS3;
+
+</h2>
+
+<h1>Razor Snack 4</h1>
+
+
+    
+      
+<h2>
+    @{
+        List<int> NumeriInteri = new List<int>(20);
+
+      
+
+        for (int i = 0; i < 20; i++)
+        {
+            int numeroCasuale = new Random().Next(1, 91);
+
+     
+            if (numeroCasuale > 20 && numeroCasuale < 70)
+            {
+                NumeriInteri.Add(numeroCasuale);
+
+               <span> @numeroCasuale </span>
+            }
+        }
+    }
+
+
+</h2>
+
+
+<h1> Razor Snack 5</h1>
+
+<h2>
+        La data e l'ora di oggi è : @DateTime.Now
+ </h2>
+
+
+<h1> Razor Snack 6 </h1>
+
+
+<h2>
+    @{
+        //Dichiaro la giornata di oggi
+        DateTime today = DateTime.Now;
+
+        //Dopo averla dichiarata, scalo con AddDays 
+        DateTime WeekAgo = today.AddDays(-7);
+        //Dichiaro un Anno in più con AddYears
+        DateTime YearsAgo = today.AddYears(1);
+        // Dichiaro facendo "Anno" "Mese" "Giorno"
+        var year = YearsAgo.ToString("yyyy MMMM dddd");
+        @year
+    }
+        </h2>
