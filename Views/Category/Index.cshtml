@@ -1,0 +1,43 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Lista Categorie";
+}
+
+@model List<Category> 
+
+@if(Model.Count() == 0){
+    <h3 class="text-center">Al momento non ci sono pizze disponibili</h3>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Nome Categoria</th>
+                <th scope="col">Azioni</th>
+
+                
+             
+            </tr>
+        </thead>
+        <tbody>
+        <tbody>
+                @foreach (Category categories in Model)
+                {
+                <tr>
+                    <td>@categories.Id</td>
+                    
+                
+                    <td class="title">@categories.Title</td>
+                <td>
+                        <a class="btn btn-info btn-sm" href="@Url.Action("Detail", "Category", new { id = categories.Id })">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-activity"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </a>
+                </td>
+                </tr>
+                }
+        </tbody>
+        </tbody>
+    </table>
+}

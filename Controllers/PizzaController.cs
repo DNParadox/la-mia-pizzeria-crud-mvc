@@ -25,7 +25,7 @@ namespace la_mia_pizzeria_static.Controllers
             //PizzeriaDbContext db = new PizzeriaDbContext();
 
 
-            // Usiamo Model
+            // Usiamo il Model per mostrare una lista
             List<Pizza> Pizzas = db.Pizzas.Include(pizzas => pizzas.Category).ToList();
 
 
@@ -36,7 +36,7 @@ namespace la_mia_pizzeria_static.Controllers
         public IActionResult Detail(int id)
         {
 
-
+            // Mostriamo nel dettaglio l'oggetto instanziato per ID includendo a sua volta la tabella Category
             Pizza Pizzas = db.Pizzas.Where(p => p.Id == id).Include("Category").FirstOrDefault();
 
             return View(Pizzas);
@@ -62,6 +62,7 @@ namespace la_mia_pizzeria_static.Controllers
             if (!ModelState.IsValid)
             {
                 //return View(post);
+
 
                 formData.Categories = db.Categories.ToList();
                 return View(formData);

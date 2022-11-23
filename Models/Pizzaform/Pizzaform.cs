@@ -2,6 +2,8 @@
 
 namespace la_mia_pizzeria_static.Models.Pizzaform
 {
+
+    //Con questa classe faccio da "Ponte" tra la tabella Pizza e Categories
     public class Pizzaform
     {
         //model del db che con le views: create, read (list, details), update
