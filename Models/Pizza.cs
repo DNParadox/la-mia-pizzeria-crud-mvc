@@ -29,7 +29,11 @@ namespace la_mia_pizzeria_static.Models
         [Range(6, 30, ErrorMessage = "Il prezzo non deve essere inferiore a 6 euro")]
         public float Price { get; set; }
 
+        //relazione 1 a n con Category ed è la vera e propria chiave esterna
+        public int CategoryId { get; set; }
 
+        //relazione 1 a n con Category l'istanza del record nelle query
+        public Category? Category { get; set; }
         public Pizza ()
         {
 

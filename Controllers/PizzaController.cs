@@ -1,9 +1,10 @@
 ﻿using la_mia_pizzeria_static.Models;
 using la_mia_pizzeria_static.data;
+using la_mia_pizzeria_static.Models.Pizzaform;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.Extensions.Hosting;
-
+using Microsoft.EntityFrameworkCore;
 
 namespace la_mia_pizzeria_static.Controllers
 {
@@ -25,10 +26,10 @@ namespace la_mia_pizzeria_static.Controllers
 
 
             // Usiamo Model
-            List<Pizza> Pizzas = db.Pizzas.ToList();
+            List<Pizza> Pizzas = db.Pizzas.Include(pizzas => pizzas.Category).ToList();
 
 
-            // In return possiamo passare un singolo argomento
+            // In return possiamo passare un singolo argomento  
             return View(Pizzas);
         }
 
@@ -36,28 +37,39 @@ namespace la_mia_pizzeria_static.Controllers
         {
 
 
-            Pizza Pizzas = db.Pizzas.Where(p => p.Id == id).FirstOrDefault();
+            Pizza Pizzas = db.Pizzas.Where(p => p.Id == id).Include("Category").FirstOrDefault();
 
             return View(Pizzas);
         }
 
         public IActionResult Create()
         {
-            return View();
+            Pizzaform formData = new Pizzaform();
+
+            formData.Pizza = new Pizza();
+            formData.Categories = db.Categories.ToList();
+
+    
+
+            return View(formData);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]  // Equivalente di CSRF di Laravel
-        public IActionResult Create(Pizza Pizzas)
+        // OLD public IActionResult Create(Pizza Pizza)
+        public IActionResult Create(Pizzaform formData)
         {
             if (!ModelState.IsValid)
             {
                 //return View(post);
-                return View();
+
+                formData.Categories = db.Categories.ToList();
+                return View(formData);
             }
 
             // Pusha nel db con .add
-            db.Pizzas.Add(Pizzas);
+            // OLD db.Pizzas.Add(Pizzas);
+            db.Pizzas.Add(formData.Pizza);
             //Salva i cambiamenti effettuati
             db.SaveChanges();
 
@@ -76,35 +88,47 @@ namespace la_mia_pizzeria_static.Controllers
             if (Pizzas == null)
                 return NotFound();
 
+
+            Pizzaform formData = new Pizzaform();
+
+            formData.Pizza = Pizzas;
+            formData.Categories = db.Categories.ToList();
+
             //return View() --> non funziona perchè non ha la memoria della Pizzas
-            return View(Pizzas);
+            return View(formData);
         }
 
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Update(int id, Pizza formData)
+        public IActionResult Update(int id, Pizzaform formData)
         {
+
+            formData.Pizza.Id = id;
 
             if (!ModelState.IsValid)
             {
                 //return View(post);
+                formData.Categories = db.Categories.ToList();
                 return View();
             }
 
-            Pizza Pizzas = db.Pizzas.Where(p => p.Id == id).FirstOrDefault();
+           // Pizza Pizzas = db.Pizzas.Where(p => p.Id == id).FirstOrDefault();
 
-            if (Pizzas == null)
-            {
-                return NotFound();
-            }
+            //if (Pizzas == null)
+            //{
+            //    return NotFound();
+            //}
 
-            Pizzas.Title = formData.Title;
-            Pizzas.Description = formData.Description;
-            Pizzas.Image = formData.Image;
-            Pizzas.Price = formData.Price;
 
-            //db.Posts.Update(post);
+            //OLD
+            //Pizzas.Title = formData.Title;
+            //Pizzas.Description = formData.Description;
+            //Pizzas.Image = formData.Image;
+            //Pizzas.Price = formData.Price;
+
+
+            db.Pizzas.Update(formData.Pizza);
             db.SaveChanges();
 
             return RedirectToAction("Index");
