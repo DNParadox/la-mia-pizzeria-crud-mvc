@@ -34,7 +34,7 @@ namespace la_mia_pizzeria_static.Controllers
         }
 
         public IActionResult Detail(int id)
-        {
+        { 
 
             // Mostriamo nel dettaglio l'oggetto instanziato per ID includendo a sua volta la tabella Category
             Pizza Pizzas = db.Pizzas.Where(p => p.Id == id).Include("Category").FirstOrDefault();

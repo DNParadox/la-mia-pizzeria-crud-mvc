@@ -34,6 +34,8 @@ namespace la_mia_pizzeria_static.Models
 
         //relazione 1 a n con Category l'istanza del record nelle query
         public Category? Category { get; set; }
+
+        public List<Tag>? Tags { get; set; }
         public Pizza ()
         {
 

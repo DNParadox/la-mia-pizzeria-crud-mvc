@@ -11,6 +11,7 @@ namespace la_mia_pizzeria_static.data
 
         // Richiamo Tabella Category
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Tag> Tags { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
 
