@@ -1,6 +1,7 @@
 ﻿using la_mia_pizzeria_static.Models;
 using la_mia_pizzeria_static.data;
 using la_mia_pizzeria_static.Models.Pizzaform;
+using la_mia_pizzeria_static.Models.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
@@ -13,32 +14,34 @@ namespace la_mia_pizzeria_static.Controllers
     {
         PizzeriaDbContext db;
 
-        public PizzaController() : base()
+        IDbPizzaRepository PizzaRepository;
+      
+
+        public PizzaController(IDbPizzaRepository _pizzaRepository) : base()
         {
             // Usiamo Data quindi DB
             // Metodo mostrato da Paolo per dichiarare soltanto una volta il nostro DB anziché di volta in volta 
             db = new PizzeriaDbContext();
+
+            PizzaRepository = _pizzaRepository;
         }
         //Read 
         public IActionResult Index()
         {
-            // Usiamo Data quindi DB . Metodo Vecchio dove bisognava dichiarare di volta in volta il db in uso
-            //PizzeriaDbContext db = new PizzeriaDbContext();
-
-
+            
             // Usiamo il Model per mostrare una lista
-            List<Pizza> Pizzas = db.Pizzas.Include(pizzas => pizzas.Category).ToList();
-
+            List<Pizza> Pizzas = PizzaRepository.All();
 
             // In return possiamo passare un singolo argomento  
             return View(Pizzas);
+
         }
 
         public IActionResult Detail(int id)
-        { 
+        {
 
             // Mostriamo nel dettaglio l'oggetto instanziato per ID includendo a sua volta la tabella Category/Tag 
-            Pizza Pizzas = db.Pizzas.Where(p => p.Id == id).Include("Category").Include("Tags").FirstOrDefault();
+            Pizza Pizzas = PizzaRepository.getById(id);
 
             return View(Pizzas);
         }
@@ -71,7 +74,6 @@ namespace la_mia_pizzeria_static.Controllers
         {
             if (!ModelState.IsValid)
             {
-                //return View(post);
 
 
                 formData.Categories = db.Categories.ToList();
@@ -91,19 +93,7 @@ namespace la_mia_pizzeria_static.Controllers
 
 
 
-            formData.Pizza.Tags = new List<Tag>();
-
-            foreach (int tagId in formData.SelectedTags)
-            {
-                Tag tag = db.Tags.Where(t => t.Id == tagId).FirstOrDefault();
-                formData.Pizza.Tags.Add(tag);
-            }
-            // Pusha nel db con .add
-            // OLD db.Pizzas.Add(Pizzas);
-            db.Pizzas.Add(formData.Pizza);
-            //Salva i cambiamenti effettuati
-            db.SaveChanges();
-
+            PizzaRepository.Create(formData.Pizza, formData.SelectedTags);
 
             //Redirect alla Index quindi alla lista di pizze creata
             return RedirectToAction("Index");
@@ -114,7 +104,7 @@ namespace la_mia_pizzeria_static.Controllers
 
         public IActionResult Update(int id)
         {
-            Pizza Pizzas = db.Pizzas.Where(p => p.Id == id).Include(p=>p.Tags).FirstOrDefault();
+            Pizza Pizzas = PizzaRepository.getById(id);
 
             if (Pizzas == null)
                 return NotFound();
@@ -167,8 +157,7 @@ namespace la_mia_pizzeria_static.Controllers
             }
 
 
-
-             Pizza PizzaItem = db.Pizzas.Where(p => p.Id == id).Include(p => p.Tags).FirstOrDefault();
+            Pizza PizzaItem = PizzaRepository.getById(id);
 
             if (PizzaItem == null)
             {
@@ -177,28 +166,7 @@ namespace la_mia_pizzeria_static.Controllers
 
 
 
-            PizzaItem.Title = formData.Pizza.Title;
-            PizzaItem.Description = formData.Pizza.Description;
-            PizzaItem.Image = formData.Pizza.Image;
-            PizzaItem.CategoryId = formData.Pizza.CategoryId;
-
-
-            PizzaItem.Tags.Clear();
-
-            if (formData.SelectedTags == null)
-            {
-                formData.SelectedTags = new List<int>();
-            }
-
-
-
-            foreach (int tagId in formData.SelectedTags)
-            {
-                Tag tag = db.Tags.Where(t => t.Id == tagId).FirstOrDefault();
-                PizzaItem.Tags.Add(tag);
-            }
-            //db.Pizzas.Update(formData.Pizza);
-            db.SaveChanges();
+            PizzaRepository.Update(PizzaItem, formData.Pizza, formData.SelectedTags);
 
             return RedirectToAction("Index");
         }
@@ -207,15 +175,14 @@ namespace la_mia_pizzeria_static.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
-            Pizza Pizzas = db.Pizzas.Where(p => p.Id == id).FirstOrDefault();
+            Pizza Pizzas = PizzaRepository.getById(id);
 
             if (Pizzas == null)
             {
                 return NotFound();
             }
 
-            db.Pizzas.Remove(Pizzas);
-            db.SaveChanges();
+            PizzaRepository.Delete(Pizzas);
 
 
             return RedirectToAction("Index");
