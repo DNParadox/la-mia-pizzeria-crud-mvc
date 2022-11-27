@@ -14,7 +14,24 @@ namespace la_mia_pizzeria_static.Models.Repositories
 
         public List<Pizza> All()
         {
+            Pizza pizzum = new Pizza();
+
+            // Bug : ad ogni refresh di Index, crea una nuova instanza di pizzum
+
+            pizzum.Id = 1;
+            pizzum.Title = "Pizzum";
+            pizzum.Description = "Descrizione Ottima";
+            pizzum.Price = 10;
+            pizzum.Image = "https://picsum.photos/200/300";
+            pizzum.Category = new Category { Id = 1, Title = "Categoria Hardcoded" };
+
+            pizzum.Tags = new List<Tag>();
+
             
+
+
+            Pizzas.Add(pizzum);
+
             return Pizzas; 
         }
         
@@ -26,17 +43,7 @@ namespace la_mia_pizzeria_static.Models.Repositories
             pizzas.Category = new Category() { Id = 1, Title = "Categoria Inventata" };
 
 
-            // Dichiarazioni 
-            //pizzas.Id = 1;
-            //pizzas.Title = "Pizzum";
-            //pizzas.Description = "Descrizione eccellente";
-            //pizzas.Price = 10;
-            //pizzas.Image = "Error 404";
-            //pizzas.CategoryId = 1;
-
-
-
-            // Fine dichiarazioni
+           
 
             pizzas.Tags = new List<Tag>();
 
@@ -67,7 +74,7 @@ namespace la_mia_pizzeria_static.Models.Repositories
         {
             Pizza pizzas = Pizzas.Where(post => post.Id == id).FirstOrDefault();
 
-            pizzas.Category = new Category() { Id = 1, Title = "Categoria Inventata" };
+            //pizzas.Category = new Category() { Id = 1, Title = "Categoria Inventata" };
          
 
 
